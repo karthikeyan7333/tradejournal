@@ -1,0 +1,8 @@
+{
+  "name": "TradeJournal",
+  "description": "Personal trading journal to record trades, review performance, and track trading progress.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

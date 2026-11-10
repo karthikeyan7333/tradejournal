@@ -1,0 +1,125 @@
+{
+  "entities": {
+    "Trade": {
+      "title": "Trade",
+      "description": "A single trading journal record executed by the user",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique trade ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Trading symbol or instrument"
+        },
+        "market": {
+          "type": "string",
+          "description": "Market type (Indian Stocks, Indian Options, Crypto, Forex, Other)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date in YYYY-MM-DD"
+        },
+        "timeframe": {
+          "type": "string",
+          "description": "Chart timeframe"
+        },
+        "setup": {
+          "type": "string",
+          "description": "Trading setup description"
+        },
+        "position": {
+          "type": "string",
+          "description": "Long or Short"
+        },
+        "positionSize": {
+          "type": "number",
+          "description": "Position or lot size"
+        },
+        "entryPrice": {
+          "type": "number",
+          "description": "Execution entry price"
+        },
+        "exitPrice": {
+          "type": "number",
+          "description": "Execution exit price"
+        },
+        "stopLoss": {
+          "type": "number",
+          "description": "Stop loss price"
+        },
+        "pnl": {
+          "type": "number",
+          "description": "Profit or loss in base points or currency"
+        },
+        "isManualPnl": {
+          "type": "boolean",
+          "description": "Whether P&L was manually entered"
+        },
+        "riskReward": {
+          "type": "number",
+          "description": "Calculated risk to reward ratio"
+        },
+        "notes": {
+          "type": "string",
+          "description": "About this trade reflections"
+        },
+        "images": {
+          "type": "array",
+          "description": "Trade screenshots"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp of creation"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp of last update"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "symbol",
+        "market",
+        "date",
+        "position",
+        "positionSize",
+        "entryPrice",
+        "exitPrice",
+        "pnl",
+        "createdAt"
+      ]
+    },
+    "UserSettings": {
+      "title": "UserSettings",
+      "description": "User preferences such as display currency",
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "Preferred display currency (INR, USD, EUR, GBP)"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp of update"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}/trades/{tradeId}": {
+      "schema": "Trade",
+      "description": "User's private trades subcollection"
+    },
+    "/users/{userId}/settings/preferences": {
+      "schema": "UserSettings",
+      "description": "User's private preferences"
+    }
+  }
+}

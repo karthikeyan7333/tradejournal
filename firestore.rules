@@ -1,0 +1,58 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all unknown paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Trade validation helper
+    function isValidTrade(data, userId) {
+      return data.userId == userId &&
+        data.symbol is string && data.symbol.size() > 0 && data.symbol.size() <= 100 &&
+        data.market is string && data.market.size() > 0 && data.market.size() <= 50 &&
+        data.date is string && data.date.size() >= 8 && data.date.size() <= 20 &&
+        data.position in ['Long', 'Short'] &&
+        data.positionSize is number && data.positionSize > 0 &&
+        data.entryPrice is number && data.entryPrice > 0 &&
+        data.exitPrice is number && data.exitPrice > 0 &&
+        data.pnl is number &&
+        data.createdAt is number;
+    }
+
+    // User's private trades subcollection
+    match /users/{userId}/trades/{tradeId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+        isValidId(tradeId) &&
+        isValidTrade(request.resource.data, userId);
+
+      allow update: if isOwner(userId) &&
+        isValidId(tradeId) &&
+        isValidTrade(request.resource.data, userId) &&
+        request.resource.data.userId == resource.data.userId &&
+        request.resource.data.createdAt == resource.data.createdAt;
+
+      allow delete: if isOwner(userId) && isValidId(tradeId);
+    }
+
+    // User's settings/preferences
+    match /users/{userId}/settings/{settingId} {
+      allow read, write: if isOwner(userId) && isValidId(settingId);
+    }
+  }
+}
